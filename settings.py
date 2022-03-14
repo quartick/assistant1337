@@ -105,16 +105,16 @@ class Settings(QMainWindow):
         )
 
         self.pushButton_3 = QPushButton(self.Widget_1)
-        self.pushButton_3.setGeometry(QRect(480, 35, 111, 41))
+        self.pushButton_3.setGeometry(QRect(550, 35, 40, 40))
         self.pushButton_3.setStyleSheet(
             '''  
             QPushButton:hover {background-color: rgba(87, 188, 255, 255);
             color: white;
-            border-radius: 10px;}
-            QPushButton:!hover { background-color: rgba(150, 200, 255, 150);
+            border-radius: 20px;}
+            QPushButton:!hover { background-color: rgba(150, 200, 255, 200);
             border-width: 2px;
             border-style: solid;
-            border-radius: 10px;
+            border-radius: 20px;
             font:  16px;
             color: #002756;
             padding: 1px;}
@@ -474,7 +474,7 @@ class Settings(QMainWindow):
         self.pushButton_5.clicked.connect(self.save)
         self.pushButton_2.setText("Exit")
         self.pushButton_2.clicked.connect(self.exit_win)
-        self.pushButton_3.setText("Info")
+        self.pushButton_3.setText("?")
         self.pushButton_3.clicked.connect(self.info)
         self.label_2.setText("Открыть/свернуть \nпомощника")
         self.label_3.setText("Закрыть окно \nуведомлений")
