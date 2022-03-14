@@ -1,3 +1,7 @@
+"""
+Модуль с настройкой диалогового облачка помощника
+"""
+
 from PyQt5.QtWidgets import QWidget, QFrame, QStackedLayout, QLabel, QTextEdit, QVBoxLayout, QGridLayout
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QRect, QSize, Qt, QMetaObject

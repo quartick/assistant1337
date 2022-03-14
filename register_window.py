@@ -1,3 +1,10 @@
+"""
+Модуль, отвечающий за регистрационное окно
+4 виджета, которые представляют "шаги" прохождения регистрации
+Также здесь же они связываются воедино, и получается прикольное окно для регистрациии
+"""
+
+
 import sys
 import configparser
 
@@ -163,7 +170,7 @@ class Widget4(QWidget):
         lay.addWidget(bye_lbl)
 
 
-class stackedExample(QWidget):
+class Stacked(QWidget):
     def __init__(self, config, parent=None):
         QWidget.__init__(self, parent=parent)
         self.setStyleSheet("background-image: ImageGif/Image/Main_bg.jpg;")
@@ -248,6 +255,6 @@ if __name__ == '__main__':
     with open("Data/Config.ini", 'w', encoding='utf-8') as configfile:
         config.write(configfile)
     app = QApplication(sys.argv)
-    w = stackedExample(config)
+    w = Stacked(config)
     w.show()
     app.exec_()

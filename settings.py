@@ -1,8 +1,15 @@
+"""
+Модуль, отвечающий за окно с настройками помощника.
+Хоткеи, конфигфайл, масштабирование, быстрый доступ и даже всё цветные кнопочки - это всё тут.
+
+p.s. Я сломал возможность изменять хоткеи поэтому надо подфиксить а пока закоментирую чтобы не тыкалось
+"""
+
 from pynput.keyboard import Key, Listener
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QSize, QThread, pyqtSlot, pyqtSignal, Qt, QRect
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, qApp, QTabWidget, QTableWidget, QTableWidgetItem, \
-    QMessageBox, QInputDialog, QDesktopWidget, QWidget, QLabel, QPushButton, QTextEdit, QSlider, QAbstractItemView
+from PyQt5.QtCore import QThread, pyqtSignal, Qt, QRect
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QTableWidget, QTableWidgetItem, \
+    QMessageBox, QInputDialog, QDesktopWidget, QWidget, QLabel, QPushButton, QTextEdit, QSlider
 import sys
 from configparser import ConfigParser
 import pickle
@@ -214,6 +221,7 @@ class Settings(QMainWindow):
         self.textEdit_2 = QTextEdit(self.Widget_2)
         self.textEdit_2.setGeometry(QRect(210, 110, 161, 41))
         self.textEdit_2.setReadOnly(True)
+        self.textEdit_2.setText(f"{self.config['Hotkeys']['hotkey_2']}")
         self.textEdit_2.setStyleSheet(
             ''' 
             background-color: rgba(0, 0, 0, 00);
@@ -224,7 +232,6 @@ class Settings(QMainWindow):
             '''
         )
 
-        self.textEdit_2.setText(f"{self.config['Hotkeys']['hotkey_2']}")
         self.textEdit_3 = QTextEdit(self.Widget_2)
         self.textEdit_3.setGeometry(QRect(210, 170, 161, 41))
         self.textEdit_3.setReadOnly(True)
@@ -253,11 +260,11 @@ class Settings(QMainWindow):
             '''
         )
 
-        self.textEdit_6 = QTextEdit(self.Widget_2)
-        self.textEdit_6.setGeometry(QRect(210, 290, 161, 41))
-        self.textEdit_6.setReadOnly(True)
-        self.textEdit_6.setText(f"{self.config['Hotkeys']['hotkey_5']}")
-        self.textEdit_6.setStyleSheet(
+        self.textEdit_5 = QTextEdit(self.Widget_2)
+        self.textEdit_5.setGeometry(QRect(210, 290, 161, 41))
+        self.textEdit_5.setReadOnly(True)
+        self.textEdit_5.setText(f"{self.config['Hotkeys']['hotkey_5']}")
+        self.textEdit_5.setStyleSheet(
             '''
             background-color: rgba(0, 0, 0, 00);
             font: bold 16px;
@@ -477,15 +484,15 @@ class Settings(QMainWindow):
         self.label_6.setText("Закрыть \nпомощника")
 
         self.pushButton.setText("Add key")
-        self.pushButton.clicked.connect(self.add_key_0)
+        # self.pushButton.clicked.connect(self.add_key_0)
         self.pushButton_7.setText("Add key")
-        self.pushButton_7.clicked.connect(self.add_key_1)
+        # self.pushButton_7.clicked.connect(self.add_key_1)
         self.pushButton_8.setText("Add key")
-        self.pushButton_8.clicked.connect(self.add_key_2)
+        # self.pushButton_8.clicked.connect(self.add_key_2)
         self.pushButton_9.setText("Add key")
-        self.pushButton_9.clicked.connect(self.add_key_3)
+        # self.pushButton_9.clicked.connect(self.add_key_3)
         self.pushButton_10.setText("Add key")
-        self.pushButton_10.clicked.connect(self.add_key_4)
+        # self.pushButton_10.clicked.connect(self.add_key_4)
 
         self.pushButton_6.setText("Del key")
         self.pushButton_6.clicked.connect(self.del_text)
@@ -652,7 +659,6 @@ class Settings(QMainWindow):
             padding: 1px;}
             '''
         )
-        self.tab_pb_2.clicked.connect(self.remove_Row)
 
         self.tab_pb_3 = QPushButton("Добавить файл", self.Widget_4)
         self.tab_pb_3.setGeometry(QRect(40, 400, 130, 32))
@@ -670,7 +676,6 @@ class Settings(QMainWindow):
             padding: 1px;}
             '''
         )
-        self.tab_pb_3.clicked.connect(self.add_file)
 
         self.tab_pb_4 = QPushButton("Добавить папку", self.Widget_4)
         self.tab_pb_4.setGeometry(QRect(185, 400, 130, 32))
@@ -688,7 +693,6 @@ class Settings(QMainWindow):
             padding: 1px;}
             '''
         )
-        self.tab_pb_4.clicked.connect(self.add_dir)
 
         self.pushButton_23 = QPushButton(self.Widget_4)
         self.pushButton_23.setGeometry(QRect(5, 210, 21, 51))
@@ -753,13 +757,13 @@ class Settings(QMainWindow):
         )
         self.setCentralWidget(self.tab)
 
-        self.thread = ThreadWin(main=self, config=self.config)
-        self.thread.change.connect(self.textEdit.setText)
-        self.thread.change_2.connect(self.textEdit_2.setText)
-        self.thread.change_3.connect(self.textEdit_3.setText)
-        self.thread.change_4.connect(self.textEdit_4.setText)
-        self.thread.change_5.connect(self.textEdit_6.setText)
-        self.choi = 0
+        # self.thread = ThreadWin(main=self, config=self.config)
+        # self.thread.change.connect(self.textEdit.setText)
+        # self.thread.change_2.connect(self.textEdit_2.setText)
+        # self.thread.change_3.connect(self.textEdit_3.setText)
+        # self.thread.change_4.connect(self.textEdit_4.setText)
+        # self.thread.change_5.connect(self.textEdit_5.setText)
+        # self.choi = 0
 
     def _on_next_tab(self):
         if self.num_page == 3:
@@ -777,7 +781,7 @@ class Settings(QMainWindow):
 
     def del_account(self):
         self.config["User"]["registered"] = "No"
-        self.config["Hotkeys"]["hotkey_1"] = "<ctrl>+`"
+        self.config["Hotkeys"]["hotkey_1"] = "<ctrl>+q"
         self.config["Hotkeys"]["hotkey_2"] = "<alt>"
         self.config["Hotkeys"]["hotkey_3"] = "`"
         self.config["Hotkeys"]["hotkey_4"] = "<ctrl>+<shift>"
@@ -791,24 +795,6 @@ class Settings(QMainWindow):
             pickle.dump(self.path, f)
 
         self.close()
-
-    def add_file(self):
-        """
-        Тут будет добавление файла в быстрый доступ
-        """
-        pass
-
-    def add_dir(self):
-        """
-        Тут будет добавление папки в быстрый доступ
-        """
-        pass
-
-    def remove_Row(self):
-        """
-        Тут будет кнопка удаления из быстрого доступа
-        """
-        pass
 
     def info(self):
         QMessageBox.about(self, 'О программе:',
@@ -863,122 +849,38 @@ class Settings(QMainWindow):
         self.config['Hotkeys']['hotkey_4'] = text
 
     def del_text_6(self):
-        self.textEdit_6.setText("")
-        text = self.textEdit_6.toPlainText()
+        self.textEdit_5.setText("")
+        text = self.textEdit_5.toPlainText()
         self.config['Hotkeys']['hotkey_5'] = text
 
-    def add_key_0(self):
-        self.pushButton.hide()
-        self.label_13.show()
-        self.thread.start()
-
-    def add_key_1(self):
-        self.choi = 1
-        self.pushButton_7.hide()
-        self.label_13.show()
-        self.thread.start()
-
-    def add_key_2(self):
-        self.choi = 2
-        self.pushButton_8.hide()
-        self.label_13.show()
-        self.thread.start()
-
-    def add_key_3(self):
-        self.choi = 3
-        self.pushButton_9.hide()
-        self.label_13.show()
-        self.thread.start()
-
-    def add_key_4(self):
-        self.choi = 4
-        self.pushButton_10.hide()
-        self.label_13.show()
-        self.thread.start()
-
-
-class ThreadWin(QThread):
-    change = pyqtSignal(str)
-    change_2 = pyqtSignal(str)
-    change_3 = pyqtSignal(str)
-    change_4 = pyqtSignal(str)
-    change_5 = pyqtSignal(str)
-
-    def __init__(self, main, config, parent=None, ):
-        super(ThreadWin, self).__init__(parent)
-        self.mainwin = main
-        self.config = config
-
-    def run(self):
-        with Listener(
-                on_press=self.on_press) as self.listener:
-            self.listener.join()
-        self.mainwin.pushButton.show()
-        self.mainwin.pushButton_7.show()
-        self.mainwin.pushButton_8.show()
-        self.mainwin.pushButton_9.show()
-        self.mainwin.pushButton_10.show()
-        self.mainwin.pushButton_11.show()
-        self.mainwin.label_13.hide()
-
-    def on_press(self, key):
-        key = str(self.listener.canonical(key=key)).replace("Key.", "")
-        key = str(key).replace("'", "")
-        if len(key) == 1:
-            self.key = key
-        elif len(key) > 1:
-            self.key = f'<{key}>'
-
-        if self.mainwin.choi == 0:
-            text = self.mainwin.textEdit.toPlainText()
-            if text == "":
-                text = f"{self.key}"
-                self.mainwin.textEdit.append(text)
-            elif text.find(key) == -1:
-                text = f"{text}+{self.key}"
-                self.change.emit(text)
-            self.config['Hotkeys']['hotkey_1'] = text
-
-        if self.mainwin.choi == 1:
-            text = self.mainwin.textEdit_2.toPlainText()
-            if text == "":
-                text = f"{self.key}"
-                self.mainwin.textEdit_2.append(text)
-            elif text.find(key) == -1:
-                text = f"{text}+{self.key}"
-                self.change_2.emit(text)
-            self.config['Hotkeys']['hotkey_2'] = text
-
-        if self.mainwin.choi == 2:
-            text = self.mainwin.textEdit_3.toPlainText()
-            if text == "":
-                text = f"{self.key}"
-                self.mainwin.textEdit_3.append(text)
-            elif text.find(key) == -1:
-                text = f"{text}+{self.key}"
-                self.change_3.emit(text)
-            self.config['Hotkeys']['hotkey_3'] = text
-
-        if self.mainwin.choi == 4:
-            text = self.mainwin.textEdit_4.toPlainText()
-            if text == "":
-                text = f"{self.key}"
-                self.mainwin.textEdit_4.append(text)
-            elif text.find(key) == -1:
-                text = f"{text}+{self.key}"
-                self.change_4.emit(text)
-            self.config['Hotkeys']['hotkey_4'] = text
-
-        if self.mainwin.choi == 5:
-            text = self.mainwin.textEdit_5.toPlainText()
-            if text == "":
-                text = f"{self.key}"
-                self.mainwin.textEdit_5.append(text)
-            elif text.find(key) == -1:
-                text = f"{text}+{self.key}"
-                self.change_5.emit(text)
-            self.config['Hotkeys']['hotkey_5'] = text
-        return False
+    # def add_key_0(self):
+    #     self.pushButton.hide()
+    #     self.label_13.show()
+    #     self.thread.start()
+    #
+    # def add_key_1(self):
+    #     self.choi = 1
+    #     self.pushButton_7.hide()
+    #     self.label_13.show()
+    #     self.thread.start()
+    #
+    # def add_key_2(self):
+    #     self.choi = 2
+    #     self.pushButton_8.hide()
+    #     self.label_13.show()
+    #     self.thread.start()
+    #
+    # def add_key_3(self):
+    #     self.choi = 3
+    #     self.pushButton_9.hide()
+    #     self.label_13.show()
+    #     self.thread.start()
+    #
+    # def add_key_4(self):
+    #     self.choi = 4
+    #     self.pushButton_10.hide()
+    #     self.label_13.show()
+    #     self.thread.start()
 
 
 if __name__ == '__main__':

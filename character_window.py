@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot, QObject, Qt, QTimer, QSi
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
 
 from dialog_window import Ui_Form
-from enter_window import EnterForm
+from enter_window import EnterField
 import avatar_setup
 
 class CustomWindow(QMainWindow):
@@ -65,7 +65,7 @@ class CustomWindow(QMainWindow):
         self.quoteWindow = DialogWindow(self, win_size=self.child)
         self.quoteWindow.start_manual.connect(self.manual)
 
-        self.flow.start_new_gif.connect(self.change_pic)
+        self.flow.start_image.connect(self.change_pic)
         self.flow.change_text.connect(self.quoteWindow.textEdit.setText)
 
         self.tab1 = QWidget()
@@ -147,7 +147,7 @@ class CustomWindow(QMainWindow):
     def exit(self):
         self.flow.timer_exit.emit(2000)
         self.show()
-        self.flow.start_new_gif.emit(self.flow.speak_gif)
+        self.flow.start_image.emit(self.flow.speak_gif)
         self.flow.change_text.emit("До встречи :(")
         self.quoteWindow.show()
         self.flow.listener.stop()
@@ -299,7 +299,7 @@ class Setup_size_window(QDialog):
         self.close()
 
 
-class EnterWindow(EnterForm):
+class EnterWindow(EnterField):
     def __init__(self, win_size):
         super().__init__()
         self.win_size = win_size

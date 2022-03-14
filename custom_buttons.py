@@ -1,3 +1,9 @@
+"""
+Модуль, создающий виджет кнопок,
+нужных для регистрационного окна выбора аватара (см. register_window.py)
+"""
+
+
 import sys
 from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QAbstractButton, QApplication, QWidget, QHBoxLayout

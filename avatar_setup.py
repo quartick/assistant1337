@@ -1,3 +1,7 @@
+"""
+Модуль, где находится пресет аватаров помщника
+"""
+
 import sys
 import configparser
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, \

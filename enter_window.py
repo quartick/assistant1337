@@ -1,12 +1,18 @@
+"""
+Модуль, отвечающий за поле для ввода письменных команд помощнику
+поля для помощников оформляются по разному, в плане визуала
+
+p.s. по нажатию tab из поля ввода "Введите команду" перескакивает на строку, которой не должно быть, пофиксите пж
+"""
+
 import sys
 import configparser
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QCompleter, QApplication, QFrame, QStackedLayout, QGridLayout, \
     QLineEdit, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt5.QtCore import Qt, QMetaObject
+from PyQt5.QtCore import QMetaObject
 
 
-class EnterForm(QWidget):
+class EnterField(QWidget):
     def __init__(self):
         super().__init__()
         self.scale = 110
@@ -19,7 +25,7 @@ class EnterForm(QWidget):
             self.bg_color = "rgba(222, 246, 255, 100)"
             self.border_color = "rgba(0, 138, 230, 255)"
             self.font_color = "rgba(0, 40, 80, 255)"
-        if self.character == "Walle":
+        elif self.character == "Walle":
             self.bg_color = "rgba(196, 135, 79, 100)"
             self.border_color = "rgba(27, 27, 27, 255)"
             self.font_color = "rgba(240, 210, 182, 255)"
@@ -63,7 +69,7 @@ class EnterForm(QWidget):
         self.hframe = QFrame()
         hlay = QHBoxLayout(self.hframe)
         self.label = QLabel(self.hframe)
-        self.label.setText(f"{self.config['User']['username']} ввёл: ")
+        self.label.setText("Чат:")
         self.label.setObjectName("UserName")
         self.label.setStyleSheet(
             '''
@@ -73,7 +79,6 @@ class EnterForm(QWidget):
             ''' % (str(self.scale) + 'px',
                    self.font_color))
 
-        # Поле ввода
         self.edit_line = QLineEdit(self.UIFrame)
         self.edit_line.setStyleSheet(
             '''
@@ -103,6 +108,6 @@ class EnterForm(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = EnterForm()
+    w = EnterField()
     w.show()
     app.exec_()
