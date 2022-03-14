@@ -95,6 +95,7 @@ class Runner(QThread):
         self.icon.setContextMenu(self.menu)
         self.icon.show()
 
+    # Метод для отображения изображения
     def image_display(self):
         if self.num == 1:
             self.num = 2
@@ -125,7 +126,7 @@ class Runner(QThread):
             self.window.quoteWindow.show()
             self.change_text.emit("Слушаю...")
 
-    # Закрыть поле вывода помощника
+    # Открытие и закрытие поля вывода помощника
     def close_ob(self):
         if self.window:
             self.window.show()

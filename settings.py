@@ -5,11 +5,10 @@
 p.s. Я сломал возможность изменять хоткеи поэтому надо подфиксить а пока закоментирую чтобы не тыкалось
 """
 
-from pynput.keyboard import Key, Listener
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QThread, pyqtSignal, Qt, QRect
+from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QTableWidget, QTableWidgetItem, \
-    QMessageBox, QInputDialog, QDesktopWidget, QWidget, QLabel, QPushButton, QTextEdit, QSlider
+    QMessageBox, QDesktopWidget, QWidget, QLabel, QPushButton, QTextEdit, QSlider
 import sys
 from configparser import ConfigParser
 import pickle

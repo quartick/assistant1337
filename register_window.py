@@ -10,7 +10,7 @@ import configparser
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, \
     QStackedWidget, QPushButton, QHBoxLayout, QApplication, QFrame, \
-    QGridLayout, QStackedLayout, QMainWindow
+    QGridLayout, QStackedLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap, QIcon
 

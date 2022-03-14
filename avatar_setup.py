@@ -4,7 +4,7 @@
 
 import sys
 import configparser
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, \
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, \
     QStackedWidget, QPushButton, QHBoxLayout, QApplication, QFrame
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFont, QPixmap

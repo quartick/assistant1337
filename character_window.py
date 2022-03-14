@@ -351,11 +351,8 @@ class EnterWindow(EnterField):
 
     def input_comm(self):
         comm = f'{self.edit_line.text()} '
-
         if len(comm) > 1:
-            self.win2.input_comm(f'{comm}')
             self.edit_line.clear()
-            self.say.setText(comm)
         else:
             self.win2.textEdit.setText("Вы ничего не ввели.")
 
@@ -381,19 +378,3 @@ class DialogWindow(Ui_Form):
                                            Qt.KeepAspectRatio, Qt.FastTransformation)
 
         self.label.setPixmap(self.mini_pix)
-
-
-def thread(my_func):
-    def wrapper(*args, **kwargs):
-        my_thread = threading.Thread(target=my_func, args=args, kwargs=kwargs)
-        my_thread.start()
-    return wrapper
-
-
-@thread
-def city_and_weather():
-    """
-    Тут будет функционал, связанный с погодой и API
-    """
-    pass
-

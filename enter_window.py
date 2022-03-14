@@ -1,8 +1,6 @@
 """
 Модуль, отвечающий за поле для ввода письменных команд помощнику
 поля для помощников оформляются по разному, в плане визуала
-
-p.s. по нажатию tab из поля ввода "Введите команду" перескакивает на строку, которой не должно быть, пофиксите пж
 """
 
 import sys
@@ -44,7 +42,7 @@ class EnterField(QWidget):
 
         width = round(445 * self.size_win / 100)
         height = round(100 * self.size_win / 100)
-        self.back = QLineEdit(self.bgFrame)
+        self.back = QFrame(self.bgFrame)
         self.back.setStyleSheet(
             '''
             background-color: %s;
