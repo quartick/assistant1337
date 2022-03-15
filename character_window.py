@@ -21,6 +21,7 @@ class CustomWindow(QMainWindow):
         # Натройка визуала самого окна, прозрачноть и т д и т п
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
         self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowTitle("Helper")
         self.setAttribute(Qt.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setWindowIcon(QIcon("Image/Characters/%s_set/Icon.png" % (character)))

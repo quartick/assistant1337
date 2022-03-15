@@ -196,7 +196,7 @@ class Stacked(QWidget):
         self.btnNext = QPushButton("Next")
         self.btnNext.setStyleSheet(
             '''  
-            QPushButton:hover { background-color: white;
+            QPushButton:hover { background-color: rgba(255, 100, 255, 100);
             color: black;
             border-width: 2px;
             border-style: solid;
