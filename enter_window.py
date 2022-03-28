@@ -7,7 +7,8 @@ import sys
 import configparser
 from PyQt5.QtWidgets import QWidget, QCompleter, QApplication, QFrame, QStackedLayout, QGridLayout, \
     QLineEdit, QVBoxLayout, QHBoxLayout, QLabel
-from PyQt5.QtCore import QMetaObject
+
+from PyQt5.QtCore import QMetaObject, Qt
 
 
 class EnterField(QWidget):
@@ -22,11 +23,19 @@ class EnterField(QWidget):
         if self.character == "Eve":
             self.bg_color = "rgba(222, 246, 255, 100)"
             self.border_color = "rgba(0, 138, 230, 255)"
-            self.font_color = "rgba(0, 40, 80, 255)"
+# <<<<<<< HEAD
+#             self.font_color = "rgba(0, 40, 80, 255)"
+#         elif self.character == "Walle":
+#             self.bg_color = "rgba(196, 135, 79, 100)"
+#             self.border_color = "rgba(27, 27, 27, 255)"
+#             self.font_color = "rgba(240, 210, 182, 255)"
+# =======
+            self.font_color = "rgba(0, 138, 230, 255)"
         elif self.character == "Walle":
             self.bg_color = "rgba(196, 135, 79, 100)"
             self.border_color = "rgba(27, 27, 27, 255)"
-            self.font_color = "rgba(240, 210, 182, 255)"
+            self.font_color = "rgba(27, 27, 27, 255)"
+# >>>>>>> 35b16929e69f2f5ab8ad6fdf6881358b205b61cd
         self.setupUi()
 
     def setupUi(self):
@@ -67,7 +76,7 @@ class EnterField(QWidget):
         self.hframe = QFrame()
         hlay = QHBoxLayout(self.hframe)
         self.label = QLabel(self.hframe)
-        self.label.setText("Чат:")
+        self.label.setText("Вы ввели:")
         self.label.setObjectName("UserName")
         self.label.setStyleSheet(
             '''
@@ -76,6 +85,20 @@ class EnterField(QWidget):
             padding: 6px;
             ''' % (str(self.scale) + 'px',
                    self.font_color))
+
+        self.say = QLabel(self.hframe)
+        self.say.setText("")
+        self.say.setObjectName("UserSaid")
+        self.say.setStyleSheet(
+            '''
+            font:  %s;
+            color: %s;
+            padding: 6px;
+            ''' % (str(self.scale) + 'px',
+                   self.font_color))
+
+        hlay.addWidget(self.label)
+        hlay.addWidget(self.say)
 
         self.edit_line = QLineEdit(self.UIFrame)
         self.edit_line.setStyleSheet(
@@ -93,7 +116,27 @@ class EnterField(QWidget):
                    str(self.scale) + 'px',
                    self.font_color))
 
+        self.edit_line.setObjectName("TextLine")
         self.edit_line.setPlaceholderText("Введите команду...")
+
+        key = ["открой браузер", "открой сайт", "изменить браузер", "открой папку", "открой файл",
+               "погода", "время", "система", "что ты умеешь?", "местоположение", "новости", "пока"]
+        self.completer = QCompleter(key, self.edit_line)
+        self.completer.setCaseSensitivity(0)
+        self.completer.setFilterMode(Qt.MatchContains)
+        self.completer.popup().setStyleSheet(
+            '''
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            border-radius: 10px;
+            border-color: blue;
+            font:  16px;
+            color: blue;
+            font-style: italic;
+            ''')
+        self.edit_line.text()
+        self.edit_line.setCompleter(self.completer)
 
         lay.addWidget(self.hframe)
         lay.addWidget(self.edit_line)

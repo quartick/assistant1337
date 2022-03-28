@@ -1,3 +1,4 @@
+
 import pickle
 import webbrowser
 import datetime
@@ -5,6 +6,8 @@ import easygui
 import os
 import platform
 import re
+
+
 from PyQt5.QtWidgets import QWidget, QMessageBox, QInputDialog, QMessageBox, QMainWindow, QLabel, \
     QDialog, QApplication, QGridLayout, QSlider, QPushButton, QStackedLayout, QFrame
 from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot, QObject, Qt, QTimer, QSize, QRect
@@ -74,6 +77,7 @@ class CustomWindow(QMainWindow):
         self.pic_display()
         self.enterWindow = EnterWindow(win_size=self.child)
         self.quoteWindow = DialogWindow(win_size=self.child)
+        self.flow.change_text_enter.connect(self.enterWindow.say.setText)
         self.quoteWindow.start_manual.connect(self.manual)
 
         self.flow.start_image.connect(self.change_pic)
@@ -149,7 +153,6 @@ class CustomWindow(QMainWindow):
         delta = event.pos() - self.old_pos
         self.move(self.pos() + delta)
 
-
     # Изменение аватара
     def change_character(self):
         self.CHS = avatar_setup.Character_setup(self.config)
@@ -164,7 +167,9 @@ class CustomWindow(QMainWindow):
         self.flow.timer_exit.emit(2000)
         self.show()
         self.flow.start_image.emit(self.flow.speak_gif)
-        self.flow.change_text.emit("До встречи :(")
+
+        self.flow.change_text.emit("Пока :(")
+
         self.quoteWindow.show()
         self.flow.listener.stop()
 
@@ -325,8 +330,9 @@ class EnterWindow(EnterField):
 
     @pyqtSlot(int)
     def size_change(self, size):
-        # width = 445 * size / 100
-        # height = 100 * size / 100
+        width = 445 * size / 100
+        height = 100 * size / 100
+
         self.scale = int(size / 100 * 18)
         self.back.setStyleSheet(
             '''
@@ -368,9 +374,10 @@ class EnterWindow(EnterField):
     def input_comm(self):
         comm = f'{self.edit_line.text()} '
         if len(comm) > 1:
-            self.win2.input_comm(f'{comm}')
+            self.say.setText(comm)
             self.edit_line.clear()
         else:
+            self.say.clear()
             self.win2.textEdit.setText("Вы ничего не ввели.")
 
 
@@ -542,4 +549,3 @@ class DialogWindow(Ui_Form):
 
         else:
             self.textEdit.setText("- Я вас не поняла.")
-
