@@ -7,6 +7,7 @@ import os
 import platform
 import re
 
+import threading
 
 from PyQt5.QtWidgets import QWidget, QMessageBox, QInputDialog, QMessageBox, QMainWindow, QLabel, \
     QDialog, QApplication, QGridLayout, QSlider, QPushButton, QStackedLayout, QFrame
@@ -16,7 +17,9 @@ from PyQt5.QtGui import QPixmap, QIcon, QMovie
 from dialog_window import Ui_Form
 from enter_window import EnterField
 import avatar_setup
+
 import wordskey
+
 
 class CustomWindow(QMainWindow):
     """
@@ -76,8 +79,12 @@ class CustomWindow(QMainWindow):
         self.child.size_pic.connect(self.size_pic_change)
         self.pic_display()
         self.enterWindow = EnterWindow(win_size=self.child)
+# <<<<<<< HEAD
         self.quoteWindow = DialogWindow(win_size=self.child)
+# =======
         self.flow.change_text_enter.connect(self.enterWindow.say.setText)
+#         self.quoteWindow = DialogWindow(self, win_size=self.child)
+# >>>>>>> 35b16929e69f2f5ab8ad6fdf6881358b205b61cd
         self.quoteWindow.start_manual.connect(self.manual)
 
         self.flow.start_image.connect(self.change_pic)
@@ -167,9 +174,7 @@ class CustomWindow(QMainWindow):
         self.flow.timer_exit.emit(2000)
         self.show()
         self.flow.start_image.emit(self.flow.speak_gif)
-
         self.flow.change_text.emit("Пока :(")
-
         self.quoteWindow.show()
         self.flow.listener.stop()
 
@@ -332,7 +337,6 @@ class EnterWindow(EnterField):
     def size_change(self, size):
         width = 445 * size / 100
         height = 100 * size / 100
-
         self.scale = int(size / 100 * 18)
         self.back.setStyleSheet(
             '''
@@ -374,10 +378,16 @@ class EnterWindow(EnterField):
     def input_comm(self):
         comm = f'{self.edit_line.text()} '
         if len(comm) > 1:
-            self.say.setText(comm)
+# <<<<<<< HEAD
+            self.win2.input_comm(f'{comm}')
             self.edit_line.clear()
         else:
-            self.say.clear()
+# =======
+#             self.say.setText(comm)
+#             self.edit_line.clear()
+#         else:
+#             self.say.clear()
+# >>>>>>> 35b16929e69f2f5ab8ad6fdf6881358b205b61cd
             self.win2.textEdit.setText("Вы ничего не ввели.")
 
 
