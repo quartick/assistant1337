@@ -62,6 +62,7 @@ class CustomWindow(QMainWindow):
         self.child.size_pic.connect(self.size_pic_change)
         self.pic_display()
         self.enterWindow = EnterWindow(win_size=self.child)
+        self.flow.change_text_enter.connect(self.enterWindow.say.setText)
         self.quoteWindow = DialogWindow(self, win_size=self.child)
         self.quoteWindow.start_manual.connect(self.manual)
 
@@ -148,7 +149,7 @@ class CustomWindow(QMainWindow):
         self.flow.timer_exit.emit(2000)
         self.show()
         self.flow.start_image.emit(self.flow.speak_gif)
-        self.flow.change_text.emit("До встречи :(")
+        self.flow.change_text.emit("Пока :(")
         self.quoteWindow.show()
         self.flow.listener.stop()
 
@@ -352,8 +353,10 @@ class EnterWindow(EnterField):
     def input_comm(self):
         comm = f'{self.edit_line.text()} '
         if len(comm) > 1:
+            self.say.setText(comm)
             self.edit_line.clear()
         else:
+            self.say.clear()
             self.win2.textEdit.setText("Вы ничего не ввели.")
 
 
