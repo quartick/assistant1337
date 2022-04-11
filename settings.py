@@ -15,7 +15,6 @@ import pickle
 
 
 class Settings(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.config = ConfigParser()
@@ -470,7 +469,7 @@ class Settings(QMainWindow):
         )
         self.pB_del_account.setText("Delete account")
         self.pB_del_account.clicked.connect(self.del_account)
-        self.pushButton_5.setText("Start")
+        self.pushButton_5.setText("Continue")
         self.pushButton_5.clicked.connect(self.save)
         self.pushButton_2.setText("Exit")
         self.pushButton_2.clicked.connect(self.exit_win)

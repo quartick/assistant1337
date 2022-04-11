@@ -2,13 +2,14 @@
 Модуль, отвечающий за связный запуск основной визуальной части
 и некоторых доступных действий помощника.
 """
+import sys
 
 from pynput import keyboard
 
-import types
+from settings import Settings
 import datetime
 
-from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QAction
+from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QAction, QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal, QThread
 from PyQt5.QtGui import QIcon
 
@@ -21,6 +22,7 @@ class Runner(QThread):
     def __init__(self, config):
         super().__init__()
 
+        self.settings_class = Settings()
         self.config = 0
         self.win_check = True                                                       # Проверка на отрытие основного окна
         self.ent_check = False                                              # Проверка на октрытие текстового окна ввода
@@ -73,13 +75,14 @@ class Runner(QThread):
         )
         icon = "Image/Characters/%s_set/Icon.png" % (self.character)
         self.icon = QSystemTrayIcon(QIcon(icon))
-        menu = {"Ввод": self.enter,  "Голосовой ввод":self.start_say,
+        menu = {"Ввод": self.enter,  "Голосовой ввод": self.start_say,
                 "Свернуть/развернуть в трей": self.show_and_close_win,
                 "Размер": self.window.show_size_setup,
-                "Закрыть окно уведомлений":self.close_ob,
+                "Закрыть окно уведомлений": self.close_ob,
+                "Настройки": self.settings,
                 "Выход": self.close}
-        if not menu:
-            menu = []
+        # if not menu:
+        #     menu = []
         items = []
         functions = []
         for elem in menu:
@@ -88,10 +91,9 @@ class Runner(QThread):
 
         for i, item in enumerate(items):
             function = functions[i]
-            if isinstance(function, types.MethodType) \
-                    or isinstance(function, types.FunctionType):
-                self.menu.addAction(QAction(item, self,
-                                            triggered=function))
+            action = QAction(item, self)
+            action.triggered.connect(function)
+            self.menu.addAction(action)
         self.icon.setContextMenu(self.menu)
         self.icon.show()
 
@@ -100,10 +102,10 @@ class Runner(QThread):
         if self.num == 1:
             self.num = 2
             self.start_image.emit(self.image)
-
-        elif self.num == 2:
-            self.num = 1
-            self.start_image.emit(self.speak_gif)
+        #
+        # elif self.num == 2:
+        #     self.num = 1
+        #     self.start_image.emit(self.speak_gif)
         self.window.choi_timer = 0
         self.timer_gif.emit(2000)
 
@@ -125,6 +127,9 @@ class Runner(QThread):
             self.window.show()
             self.window.quoteWindow.show()
             self.change_text.emit("Слушаю...")
+        if self.ent_check:
+            self.ent_check = False
+            self.window.enterWindow.hide()
 
     # Открытие и закрытие поля вывода помощника
     def close_ob(self):
@@ -143,6 +148,8 @@ class Runner(QThread):
     def enter(self):
         if self.window:
             self.window.show()
+            if self.voice_check == 1:
+                self.voice_check = 0
             if self.ent_check == False:
                 self.ent_check = True
                 self.window.enterWindow.win2 = self.window.quoteWindow
@@ -156,10 +163,18 @@ class Runner(QThread):
                 self.window.enterWindow.hide()
 
 
+    def settings(self):
+        if self.win_check == True:
+            self.win_check = False
+            self.window.hide()
+        app = QApplication(sys.argv)
+        self.settings_class.show()
+        app.exec_()
+
+
     # Закрытие
     def close(self):
-        if self.window:
-            self.window.exit()
+        self.quit()
 
     # Метод для получения времени для обращения к пользователю
     def change_window(self, window):

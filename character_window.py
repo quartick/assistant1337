@@ -7,8 +7,6 @@ import os
 import platform
 import re
 
-import threading
-
 from PyQt5.QtWidgets import QWidget, QMessageBox, QInputDialog, QMessageBox, QMainWindow, QLabel, \
     QDialog, QApplication, QGridLayout, QSlider, QPushButton, QStackedLayout, QFrame
 from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot, QObject, Qt, QTimer, QSize, QRect
@@ -23,7 +21,7 @@ import wordskey
 
 class CustomWindow(QMainWindow):
     """
-    Так-ссс, этот класс основное окно, которое связывает все, принимает только размеры.
+    Это класс основного окна, который связывает все, принимает только размеры.
     """
     def __init__(self, config, flow, parent=None):
         super(CustomWindow, self).__init__(parent)
@@ -67,9 +65,9 @@ class CustomWindow(QMainWindow):
         win_size = (self.frameSize().width(), self.frameSize().height())
         x = screen_size[0] - win_size[0]
         y = screen_size[1] - win_size[1]
-        if x != int(self.config["Settings"]["window_pos_x"]) and y != int(self.config["Settings"]["window_pos_y"]):
-            x = int(self.config["Settings"]["window_pos_x"])
-            y = int(self.config["Settings"]["window_pos_y"])
+        # if x != int(self.config["Settings"]["window_pos_x"]) and y != int(self.config["Settings"]["window_pos_y"]):
+        #     x = int(self.config["Settings"]["window_pos_x"])
+        #     y = int(self.config["Settings"]["window_pos_y"])
         self.move(x, y)
 
     def initUI(self):
@@ -79,12 +77,8 @@ class CustomWindow(QMainWindow):
         self.child.size_pic.connect(self.size_pic_change)
         self.pic_display()
         self.enterWindow = EnterWindow(win_size=self.child)
-# <<<<<<< HEAD
         self.quoteWindow = DialogWindow(win_size=self.child)
-# =======
         self.flow.change_text_enter.connect(self.enterWindow.say.setText)
-#         self.quoteWindow = DialogWindow(self, win_size=self.child)
-# >>>>>>> 35b16929e69f2f5ab8ad6fdf6881358b205b61cd
         self.quoteWindow.start_manual.connect(self.manual)
 
         self.flow.start_image.connect(self.change_pic)
@@ -378,22 +372,17 @@ class EnterWindow(EnterField):
     def input_comm(self):
         comm = f'{self.edit_line.text()} '
         if len(comm) > 1:
-# <<<<<<< HEAD
             self.win2.input_comm(f'{comm}')
+            self.say.setText(comm)
             self.edit_line.clear()
         else:
-# =======
-#             self.say.setText(comm)
-#             self.edit_line.clear()
-#         else:
-#             self.say.clear()
-# >>>>>>> 35b16929e69f2f5ab8ad6fdf6881358b205b61cd
+            self.say.clear()
             self.win2.textEdit.setText("Вы ничего не ввели.")
 
 
 class DialogWindow(Ui_Form):
     """
-    А тут будет почти всё, что связано с взаимодействием с пользователем
+    А тут почти всё, что связано с взаимодействием с пользователем
     """
     start_manual = pyqtSignal()
     th_signal_loc = pyqtSignal(dict)
@@ -432,11 +421,11 @@ class DialogWindow(Ui_Form):
             if i:
                 os.startfile(path[i[0]])
                 return 0
-        self.textEdit.setText("- Такой папки/файла нет.")
+        self.textEdit.setText("Такой папки/файла нет.")
 
     def browser(self, ans, brow, choi):
         if choi == 0:
-            self.textEdit.setText("- Открываю браузер (сайт - 'Яндекс').")
+            self.textEdit.setText("Открываю браузер (сайт - 'Яндекс').")
             webbrowser.get(brow).open("https://yandex.ru")
             return 0
 
@@ -449,15 +438,15 @@ class DialogWindow(Ui_Form):
                 key = r"\b" + f"{key}" + r"\b"
                 key = re.search(key, ans)
                 if key:
-                    self.textEdit.setText(f"- Открываю {key[0]} в браузере.")
+                    self.textEdit.setText(f"Открываю {key[0]} в браузере.")
                     webbrowser.get(brow).open(key[0])
                     return 0
 
-            self.textEdit.setText("- Я не знаю такого сайта")
+            self.textEdit.setText("Я не знаю такого сайта")
 
 
         elif choi == 3:
-            self.textEdit.setText("- Открываю новости.")
+            self.textEdit.setText("Открываю новости.")
             webbrowser.get(brow).open("http://newslab.ru/news/")
 
         elif choi == 2:
@@ -487,10 +476,10 @@ class DialogWindow(Ui_Form):
                     elif ok != -1:
                         return choice_br
                 else:
-                    self.textEdit.setText('- Вы не выбрали браузер.')
+                    self.textEdit.setText('Вы не выбрали браузер.')
                     return 0
             else:
-                self.textEdit.setText('- Вы не выбрали браузер.')
+                self.textEdit.setText('Вы не выбрали браузер.')
                 return 0
 
 
@@ -498,10 +487,9 @@ class DialogWindow(Ui_Form):
         now = datetime.datetime.now()
         answer = ["Время", "Дата"]
         if dat_time == answer[0]:
-            return f"- Сейчас - {now.hour}:{now.minute}:{now.second}."
+            return f"Сейчас - {now.hour}:{now.minute}:{now.second}."
         elif dat_time == answer[1]:
-            return f"- Сегодняшняя дата - {now.date().day}-{now.date().month}-{now.date().year}. " \
-                   f"Не забудьте отдохнуть."
+            return f"Сегодняшняя дата - {now.date().day}-{now.date().month}-{now.date().year}. "
 
     def system(self):
         sys = platform.uname()
@@ -515,7 +503,7 @@ class DialogWindow(Ui_Form):
 
     def do_command(self, result):
         self.show()
-        self.textEdit.setText("- Выполняю...")
+        self.textEdit.setText("Выполняю...")
 
         if re.search(r"\bбраузер\b", f"{result}") and re.search(r"\bоткрой\b", f"{result}"):
             self.browser(result, self.num_brow, 0)
@@ -530,9 +518,10 @@ class DialogWindow(Ui_Form):
                 webbrowser.register('Browser', None,
                                     webbrowser.BackgroundBrowser(self.num_brow))
                 self.num_brow = 'Browser'
-                self.textEdit.setText("- Браузер успешно изменен, пока я работаю).")
+                self.textEdit.setText("Браузер успешно изменен, пока я работаю).")
 
-        elif re.search(r"\bоткрой\b", f"{result}") and ((re.search(r"\bпапку\b", f"{result}")) or (re.search(r"\bфайл\b", f"{result}"))):
+        elif re.search(r"\bоткрой\b", f"{result}") and ((re.search(r"\bпапку\b", f"{result}"))
+                                                        or (re.search(r"\bфайл\b", f"{result}"))):
             self.open_file_dir(result)
 
         elif re.search(r"\bвремя\b", f"{result}"):
@@ -552,10 +541,10 @@ class DialogWindow(Ui_Form):
 
         elif re.search(r"\bтебя\b", f"{result}") and re.search(r"\bзовут\b", f"{result}") \
                 and re.search(r"\bкак\b", f"{result}"):
-            self.textEdit.setText(f"- Мое имя {self.config['User']['character']}")
+            self.textEdit.setText(f"Мое имя {self.config['User']['character']}")
 
         elif re.search(r"\bпока\b", f"{result}"):
             self.flow.close()
 
         else:
-            self.textEdit.setText("- Я вас не поняла.")
+            self.textEdit.setText("Я такого ещё не знаю :(")

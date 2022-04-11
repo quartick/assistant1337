@@ -23,19 +23,11 @@ class EnterField(QWidget):
         if self.character == "Eve":
             self.bg_color = "rgba(222, 246, 255, 100)"
             self.border_color = "rgba(0, 138, 230, 255)"
-# <<<<<<< HEAD
-#             self.font_color = "rgba(0, 40, 80, 255)"
-#         elif self.character == "Walle":
-#             self.bg_color = "rgba(196, 135, 79, 100)"
-#             self.border_color = "rgba(27, 27, 27, 255)"
-#             self.font_color = "rgba(240, 210, 182, 255)"
-# =======
             self.font_color = "rgba(0, 138, 230, 255)"
         elif self.character == "Walle":
             self.bg_color = "rgba(196, 135, 79, 100)"
             self.border_color = "rgba(27, 27, 27, 255)"
             self.font_color = "rgba(27, 27, 27, 255)"
-# >>>>>>> 35b16929e69f2f5ab8ad6fdf6881358b205b61cd
         self.setupUi()
 
     def setupUi(self):
