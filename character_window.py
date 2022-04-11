@@ -1,5 +1,7 @@
-
+import json
+import operator
 import pickle
+import threading
 import webbrowser
 import datetime
 import easygui
@@ -11,9 +13,11 @@ from PyQt5.QtWidgets import QWidget, QMessageBox, QInputDialog, QMessageBox, QMa
     QDialog, QApplication, QGridLayout, QSlider, QPushButton, QStackedLayout, QFrame
 from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot, QObject, Qt, QTimer, QSize, QRect
 from PyQt5.QtGui import QPixmap, QIcon, QMovie
+from pip._vendor import requests
 
 from dialog_window import Ui_Form
 from enter_window import EnterField
+from weather_widget import WeatherForm
 import avatar_setup
 
 import wordskey
@@ -76,8 +80,9 @@ class CustomWindow(QMainWindow):
         self.child.size_CW.connect(self.size_change)
         self.child.size_pic.connect(self.size_pic_change)
         self.pic_display()
+        self.weatherWindow = WeatherForm(self.child)
         self.enterWindow = EnterWindow(win_size=self.child)
-        self.quoteWindow = DialogWindow(win_size=self.child)
+        self.quoteWindow = DialogWindow(self, win_size=self.child)
         self.flow.change_text_enter.connect(self.enterWindow.say.setText)
         self.quoteWindow.start_manual.connect(self.manual)
 
@@ -112,6 +117,8 @@ class CustomWindow(QMainWindow):
         lay3.setColumnStretch(0, 1)
         lay3.setColumnStretch(1, 1)
         lay3.setColumnStretch(2, 1)
+        lay3.addWidget(self.weatherWindow, 0, 2)
+
         quoteLayout.addWidget(hframe)
         quoteLayout.addWidget(mframe)  #
         quoteLayout.addWidget(wframe)
@@ -120,6 +127,22 @@ class CustomWindow(QMainWindow):
         self.enterWindow.hide()
         self.quoteWindow.hide()
         self.choi_size_settin = 0
+
+        self.timer_weather = QTimer(self)
+        self.timer_weather.timeout.connect(self.changes_weat_time)
+
+        self.timer_exit = QTimer(self)
+        self.timer_exit.timeout.connect(self.changes_exit_time)
+        self.flow.timer_exit.connect(self.timer_exit.start)
+
+    def changes_weat_time(self):
+        self.weatherWindow.hide()
+        self.timer_weather.stop()
+
+    def changes_exit_time(self):
+        self.close()
+        self.timer_exit.stop()
+
 
     @pyqtSlot(str)
     def change_pic(self, path):
@@ -172,6 +195,34 @@ class CustomWindow(QMainWindow):
         self.quoteWindow.show()
         self.flow.listener.stop()
 
+    def change_weather(self, weather):
+        self.weatherWindow.show()
+        self.timer_weather.start(3000)
+        if weather == "ясно":
+            self.weatherWindow.change_icon(weather)
+
+        if weather == "пасмурно" or weather == "гроза с небольшим дождём":
+            self.weatherWindow.change_icon(weather)
+            # self.weatherWindow.show()
+
+        if weather == "облачно с прояснениями":
+            self.weatherWindow.change_icon(weather)
+            # self.weatherWindow.show()
+
+        if weather == "переменная облачность":
+            self.weatherWindow.change_icon(weather)
+            # self.weatherWindow.show()
+
+        if weather == "небольшая облачность":
+            self.weatherWindow.change_icon(weather)
+            # self.weatherWindow.show()
+
+        if weather == "небольшой дождь":
+            self.weatherWindow.change_icon(weather)
+
+        if weather == "небольшой проливной дождь":
+            self.weatherWindow.change_icon(weather)
+
     @pyqtSlot()
     def manual(self):
         QMessageBox.about(self, 'О программе:',
@@ -211,6 +262,7 @@ class Setup_size_window(QDialog):
     size_ent = pyqtSignal(int)
     size_CW = pyqtSignal(int)
     size_dialog = pyqtSignal(int)
+    size_weather = pyqtSignal(int)
 
     def __init__(self, config, win_CW):
         super(Setup_size_window, self).__init__()
@@ -380,6 +432,48 @@ class EnterWindow(EnterField):
             self.win2.textEdit.setText("Вы ничего не ввели.")
 
 
+def thread(my_func):
+    """
+    Запускает функцию в отдельном потоке
+    """
+    def wrapper(*args, **kwargs):
+        my_thread = threading.Thread(target=my_func, args=args, kwargs=kwargs)
+        my_thread.start()
+
+    return wrapper
+
+
+@thread
+def city_and_weather(signal, choi):
+    try:
+        send_url = "http://api.ipstack.com/check?access_key=c024957c288f813bf6f290a7182aa3d7"
+        geo_req = requests.get(send_url)
+        geo_json = json.loads(geo_req.text)
+        if choi == 0:
+            signal.emit(geo_json)
+            return 0
+
+        elif choi == 1:
+            city_id = geo_json["location"]["geoname_id"]
+            appid = "3afeacd4d791d087699e1eef4315c1ec"
+            try:
+                res = requests.get("http://api.openweathermap.org/data/2.5/weather",
+                                   params={'id': city_id, 'units': 'metric', 'lang': 'ru',
+                                           'APPID': appid})
+                data = res.json()
+                signal.emit(data)
+                return 0
+
+            except:
+                signal.emit({0: "К сожалению сервер не отвечает.\n"
+                                "Попробуйте позже."})
+                return 0
+    except:
+        signal.emit({0: "Похоже нет доступа к сети.\n"
+                        "Попробуйте позже."})
+        return 0
+
+
 class DialogWindow(Ui_Form):
     """
     А тут почти всё, что связано с взаимодействием с пользователем
@@ -388,11 +482,20 @@ class DialogWindow(Ui_Form):
     th_signal_loc = pyqtSignal(dict)
     th_signal_weath = pyqtSignal(dict)
 
-    def __init__(self, win_size):
+    def __init__(self, CW, win_size):
         super().__init__()
+        self.CW = CW  # Для функции погоды
         self.win_size = win_size
+        self.th_signal_weath.connect(self.show_weather, Qt.QueuedConnection)
         self.win_size.size_dialog.connect(self.size_change)
-        self.num_brow = None  # Для изменения основного браузера
+        self.num_brow = None  # Для изменения основного бразузера
+        self.OPERATIONS = {
+            '+': operator.add,
+            '-': operator.sub,
+            '*': operator.mul,
+            '/': operator.floordiv,
+            '^': operator.pow,
+        }
 
     @pyqtSlot(int)
     def size_change(self, size):
@@ -411,6 +514,40 @@ class DialogWindow(Ui_Form):
         self.textEdit.append(f'Вы сказали - {command}')
         command = wordskey.words_recog(command)
         self.do_command(command)
+
+    def get_number(self, varstr):
+        s = ""
+        if varstr[0] == '-':
+            s += "-"
+            varstr = varstr[1:]
+        for c in varstr:
+            if not c.isdigit():
+                break
+            s += c
+        return int(s), len(s)
+
+    def perform_operation(self, string, num1, num2):
+        op = self.OPERATIONS.get(string, None)
+        if op is not None:
+            return op(num1, num2)
+        else:
+            return None
+
+    def eval_math_expr(self, expr):
+        while True:
+            try:
+                number1, end_number1 = self.get_number(expr)
+                expr = expr[end_number1:]
+                if expr == '':
+                    return number1
+                op = expr[0]
+                expr = expr[1:]
+                number2, end_number2 = self.get_number(expr)
+                number1 = self.perform_operation(op, number1, number2)
+            except Exception as e:
+                break
+
+            return number1
 
     def open_file_dir(self, result):
         with open("Pickle/path_base_win.pickle", "rb") as f:
@@ -501,6 +638,19 @@ class DialogWindow(Ui_Form):
                f"    Тип машины - {sys[4]}\n" \
                f"    Имя процессора - {sys[5]}"
 
+    def show_weather(self, weath_data):
+        if 'name' in weath_data:
+            self.textEdit.setText("Погода на сегодня:")
+            self.textEdit.append(f"{weath_data['weather'][0]['description']},")
+            self.textEdit.append(f"температура: {weath_data['main']['temp']} °C,")
+            self.textEdit.append(f"")
+            self.textEdit.append(f"мин.: {weath_data['main']['temp_min']}")
+            self.textEdit.append(f"макс.: {weath_data['main']['temp_max']}")
+            weat = weath_data['weather'][0]['description']
+            self.CW.change_weather(weat)
+        else:
+            self.textEdit.setText(f"{weath_data[0]}")
+
     def do_command(self, result):
         self.show()
         self.textEdit.setText("Выполняю...")
@@ -542,6 +692,15 @@ class DialogWindow(Ui_Form):
         elif re.search(r"\bтебя\b", f"{result}") and re.search(r"\bзовут\b", f"{result}") \
                 and re.search(r"\bкак\b", f"{result}"):
             self.textEdit.setText(f"Мое имя {self.config['User']['character']}")
+
+
+        elif re.search(r"\bпогода\b", f"{result}"):
+            self.textEdit.setText(f"Загружаю информацию о погоде...")
+            city_and_weather(self.th_signal_weath, 1)
+
+        elif re.search(r"\b\d+[-+*/^]?\d+\b", f"{result}"):
+            expr = re.search(r"\b\d+[-+*/^]?\d+\b", f"{result}")[0]
+            self.textEdit.setText(f"{expr}={self.eval_math_expr(expr)}")
 
         elif re.search(r"\bпока\b", f"{result}"):
             self.flow.close()

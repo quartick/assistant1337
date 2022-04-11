@@ -18,6 +18,8 @@ class Runner(QThread):
     start_image = pyqtSignal(str)
     change_text = pyqtSignal(str)
     change_text_enter = pyqtSignal(str)
+    timer_exit = pyqtSignal(int)
+    proc_comm = pyqtSignal(str)
 
     def __init__(self, config):
         super().__init__()
@@ -28,7 +30,6 @@ class Runner(QThread):
         self.ent_check = False                                              # Проверка на октрытие текстового окна ввода
         self.voice_check = 0                                                       # Проверка на запуск голосового ввода
         self.quote = True
-        self.num = 2
         self.config = config
         self.character = self.config["User"]["character"]
         self.image = "Image/Characters/%s_set/%s_main.png" % (self.character, self.character)
@@ -107,7 +108,7 @@ class Runner(QThread):
         #     self.num = 1
         #     self.start_image.emit(self.speak_gif)
         self.window.choi_timer = 0
-        self.timer_gif.emit(2000)
+
 
     # Метод для закрытия и открытия основного окна
     def show_and_close_win(self):
@@ -167,14 +168,13 @@ class Runner(QThread):
         if self.win_check == True:
             self.win_check = False
             self.window.hide()
-        app = QApplication(sys.argv)
         self.settings_class.show()
-        app.exec_()
 
 
     # Закрытие
     def close(self):
-        self.quit()
+        if self.window:
+            self.flow.close()
 
     # Метод для получения времени для обращения к пользователю
     def change_window(self, window):
