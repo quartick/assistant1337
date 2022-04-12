@@ -5,11 +5,13 @@
 import sys
 
 from pynput import keyboard
+import dialog_window
 
 from settings import Settings
 import speech_manager
 import types
 import datetime
+from character_window import DialogWindow
 
 from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QAction, QWidget, QApplication
 from PyQt5.QtCore import pyqtSignal, QThread
@@ -28,6 +30,7 @@ class Runner(QThread):
 
         self.settings_class = Settings()
         self.config = 0
+        self.command = ""
         self.win_check = True                                                       # Проверка на отрытие основного окна
         self.ent_check = False                                              # Проверка на октрытие текстового окна ввода
         self.voice_check = 0                                                       # Проверка на запуск голосового ввода
@@ -130,7 +133,11 @@ class Runner(QThread):
             self.window.show()
             self.window.quoteWindow.show()
             self.change_text.emit("Слушаю...")
-            self.change_text.emit(speech_manager.recognize())
+            self.command = speech_manager.recognize()
+            # DialogWindow.do_command(self.command)
+            self.change_text.emit(self.command)
+            self.voice_check = 0
+            # DialogWindow.input_comm(DialogWindow, self.command)
         if self.ent_check:
             self.ent_check = False
             self.window.enterWindow.hide()

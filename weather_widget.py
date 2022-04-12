@@ -23,13 +23,13 @@ class WeatherForm(QWidget):
     @pyqtSlot(int)
     def size_change(self, size):
         pixmap = QPixmap("Image/Other/Sun.png")
-        mini_pix = pixmap.scaled(150 * size / 100,
-                                 150 * size / 100, Qt.KeepAspectRatio, Qt.FastTransformation)
+        mini_pix = pixmap.scaled(int(150 * size / 100),
+                                 int(150 * size / 100), Qt.KeepAspectRatio, Qt.FastTransformation)
         self.sun.setPixmap(mini_pix)
 
         pixmap = QPixmap("Image/Other/Rain.png")
-        mini_pix = pixmap.scaled(150 * size / 100,
-                                 150 * size / 100, Qt.KeepAspectRatio, Qt.FastTransformation)
+        mini_pix = pixmap.scaled(int(150 * size / 100),
+                                 int(150 * size / 100), Qt.KeepAspectRatio, Qt.FastTransformation)
         self.rain.setPixmap(mini_pix)
 
     def setupUi(self):
@@ -41,29 +41,29 @@ class WeatherForm(QWidget):
         self.empty.setObjectName("Empty")
 
         pixmap = QPixmap("Image/Other/Sun.png")
-        mini_pix = pixmap.scaled(150 * self.size_win / 100,
-                                 150 * self.size_win / 100, Qt.KeepAspectRatio, Qt.FastTransformation)
+        mini_pix = pixmap.scaled(int(150 * self.size_win / 100),
+                                 int(150 * self.size_win / 100), Qt.KeepAspectRatio, Qt.FastTransformation)
         self.sun = QLabel(self.frame)
         self.sun.setPixmap(mini_pix)
         self.sun.setObjectName("Sun")
 
         pixmap = QPixmap("Image/Other/Rain.png")
-        mini_pix = pixmap.scaled(150 * self.size_win / 100,
-                                 150 * self.size_win / 100, Qt.KeepAspectRatio, Qt.FastTransformation)
+        mini_pix = pixmap.scaled(int(150 * self.size_win / 100),
+                                 int(150 * self.size_win / 100), Qt.KeepAspectRatio, Qt.FastTransformation)
         self.rain = QLabel(self.frame)
         self.rain.setPixmap(mini_pix)
         self.rain.setObjectName("Rain")
 
         pixmap = QPixmap("Image/Other/Cloud.png")
-        mini_pix = pixmap.scaled(150 * self.size_win / 100,
-                                 150 * self.size_win / 100, Qt.KeepAspectRatio, Qt.FastTransformation)
+        mini_pix = pixmap.scaled(int(150 * self.size_win / 100),
+                                 int(150 * self.size_win / 100), Qt.KeepAspectRatio, Qt.FastTransformation)
         self.cloud = QLabel(self.frame)
         self.cloud.setPixmap(mini_pix)
         self.cloud.setObjectName("Cloud")
 
         pixmap = QPixmap("Image/Other/Sun_cloud.png")
-        mini_pix = pixmap.scaled(150 * self.size_win / 100,
-                                 150 * self.size_win / 100, Qt.KeepAspectRatio, Qt.FastTransformation)
+        mini_pix = pixmap.scaled(int(150 * self.size_win / 100),
+                                 int(150 * self.size_win / 100), Qt.KeepAspectRatio, Qt.FastTransformation)
         self.sun_cloud = QLabel(self.frame)
         self.sun_cloud.setPixmap(mini_pix)
         self.sun_cloud.setObjectName("Sun_Cloud")
