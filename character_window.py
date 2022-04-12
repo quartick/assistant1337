@@ -27,6 +27,8 @@ class CustomWindow(QMainWindow):
     """
     Это класс основного окна, который связывает все, принимает только размеры.
     """
+    change_textt = pyqtSignal(str)
+
     def __init__(self, config, flow, parent=None):
         super(CustomWindow, self).__init__(parent)
         self.config = config
@@ -48,6 +50,10 @@ class CustomWindow(QMainWindow):
         self.initUI()
 
         self.setWindowFlag(Qt.WindowStaysOnTopHint)                    # Флаг для того, чтобы дп весел поверх всех окон
+
+    @pyqtSlot(str)
+    def temp(self, text):
+        self.change_textt.emit(text)
 
     @pyqtSlot(int)
     def size_pic_change(self, size):
@@ -87,6 +93,7 @@ class CustomWindow(QMainWindow):
         self.quoteWindow.start_manual.connect(self.manual)
 
         self.flow.start_image.connect(self.change_pic)
+        self.change_textt.connect(self.quoteWindow.input_comm)
         self.flow.change_text.connect(self.quoteWindow.textEdit.setText)
 
         self.tab1 = QWidget()
@@ -511,7 +518,7 @@ class DialogWindow(Ui_Form):
     # Обработка команд
     @pyqtSlot(str)
     def input_comm(self, command):
-        self.textEdit.append(f'Вы сказали - {command}')
+        #self.textEdit.append(f'Вы сказали - {command}')
         command = wordskey.words_recog(command)
         self.do_command(command)
 
@@ -643,7 +650,6 @@ class DialogWindow(Ui_Form):
             self.textEdit.setText("Погода на сегодня:")
             self.textEdit.append(f"{weath_data['weather'][0]['description']},")
             self.textEdit.append(f"температура: {weath_data['main']['temp']} °C,")
-            self.textEdit.append(f"")
             self.textEdit.append(f"мин.: {weath_data['main']['temp_min']}")
             self.textEdit.append(f"макс.: {weath_data['main']['temp_max']}")
             weat = weath_data['weather'][0]['description']

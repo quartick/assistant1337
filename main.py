@@ -1,5 +1,6 @@
 import sys
 from configparser import ConfigParser
+from unittest import runner
 
 from PyQt5.QtWidgets import QApplication
 
@@ -39,6 +40,7 @@ def main():
         thread1 = Runner(config=config)
         thread1.start()
         window = CustomWindow(config, flow=thread1)
+        thread1.change_text.connect(window.temp)
         window.show()
         thread1.change_window(window=window)
         thread1.tray_start()
