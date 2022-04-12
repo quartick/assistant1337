@@ -3,17 +3,51 @@
 и некоторых доступных действий помощника.
 """
 import sys
+import threading
 
 from pynput import keyboard
 
 from settings import Settings
-import speech_manager
+import speech_recognition as sr
 import types
 import datetime
 
 from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QAction, QWidget, QApplication
-from PyQt5.QtCore import pyqtSignal, QThread
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 from PyQt5.QtGui import QIcon
+
+
+def thread(my_func):
+    """
+    Запускает функцию в отдельном потоке
+    """
+
+    def wrapper(*args, **kwargs):
+        my_thread = threading.Thread(target=my_func, args=args, kwargs=kwargs)
+        my_thread.start()
+
+    return wrapper
+
+@thread
+def say(signal, text):
+    recor = sr.Recognizer()
+    micro = sr.Microphone(device_index=None)
+
+    with micro as source:
+        recor.adjust_for_ambient_noise(source, duration=1)
+        text.emit("- Слушаю...")
+        audio = recor.listen(source)
+    try:
+        zadanie = recor.recognize_google(audio, language="ru-RU").lower()
+
+    except sr.UnknownValueError:
+        zadanie = "- Я вас не поняла."
+
+    except sr.RequestError:
+        zadanie = "- К сожалению, я распознаю речь с интернетом("
+
+    signal.emit(zadanie)
 
 
 class Runner(QThread):
@@ -22,6 +56,7 @@ class Runner(QThread):
     change_text_enter = pyqtSignal(str)
     timer_exit = pyqtSignal(int)
     proc_comm = pyqtSignal(str)
+    voice = pyqtSignal(str)
 
     def __init__(self, config):
         super().__init__()
@@ -33,6 +68,7 @@ class Runner(QThread):
         self.voice_check = 0                                                       # Проверка на запуск голосового ввода
         self.quote = True
         self.config = config
+        self.voice.connect(self.say_command, QtCore.Qt.QueuedConnection)
         self.character = self.config["User"]["character"]
         self.image = "Image/Characters/%s_set/%s_main.png" % (self.character, self.character)
 
@@ -129,11 +165,8 @@ class Runner(QThread):
             self.voice_check = 1
             self.window.show()
             self.window.quoteWindow.show()
-            self.change_text.emit("Слушаю...")
-            self.change_text.emit(speech_manager.recognize())
-        if self.ent_check:
-            self.ent_check = False
-            self.window.enterWindow.hide()
+            say(self.voice, self.change_text)
+
 
     # Открытие и закрытие поля вывода помощника
     def close_ob(self):
@@ -178,6 +211,10 @@ class Runner(QThread):
     def close(self):
         if self.window:
             self.flow.close()
+
+    def say_command(self, say_comm):
+        self.proc_comm.emit(say_comm)
+        self.voice_check = 0
 
     # Метод для получения времени для обращения к пользователю
     def change_window(self, window):
