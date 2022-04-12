@@ -20,37 +20,6 @@ from PyQt5.QtCore import pyqtSignal, QThread, pyqtSlot
 from PyQt5.QtGui import QIcon
 
 
-def thread(my_func):
-    """
-    Запускает функцию в отдельном потоке
-    """
-
-    def wrapper(*args, **kwargs):
-        my_thread = threading.Thread(target=my_func, args=args, kwargs=kwargs)
-        my_thread.start()
-
-    return wrapper
-
-@thread
-def say(signal, text):
-    recor = sr.Recognizer()
-    micro = sr.Microphone(device_index=None)
-
-    with micro as source:
-        recor.adjust_for_ambient_noise(source, duration=1)
-        text.emit("- Слушаю...")
-        audio = recor.listen(source)
-    try:
-        zadanie = recor.recognize_google(audio, language="ru-RU").lower()
-
-    except sr.UnknownValueError:
-        zadanie = "- Я вас не поняла."
-
-    except sr.RequestError:
-        zadanie = "- К сожалению, я распознаю речь с интернетом("
-
-    signal.emit(zadanie)
-
 
 class Runner(QThread):
     start_image = pyqtSignal(str)
@@ -139,6 +108,10 @@ class Runner(QThread):
         self.icon.setContextMenu(self.menu)
         self.icon.show()
 
+
+    def close(self):
+        print('1')
+
     # Метод для отображения изображения
     def image_display(self):
         if self.num == 1:
@@ -173,7 +146,6 @@ class Runner(QThread):
             # DialogWindow.do_command(self.command)
             self.change_text.emit(self.command)
             self.voice_check = 0
-            # DialogWindow.input_comm(DialogWindow, self.command)
         if self.ent_check:
             self.ent_check = False
             self.window.enterWindow.hide()
@@ -219,10 +191,10 @@ class Runner(QThread):
         self.settings_class.show()
 
 
-    # Закрытие
-    def close(self):
-        if self.window:
-            self.flow.close()
+    # # Закрытие
+    # def close(self):
+    #     if self.window:
+    #         self.close()
 
     def say_command(self, say_comm):
         self.proc_comm.emit(say_comm)
