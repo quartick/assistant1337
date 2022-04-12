@@ -7,6 +7,8 @@ import sys
 from pynput import keyboard
 
 from settings import Settings
+import speech_manager
+import types
 import datetime
 
 from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QAction, QWidget, QApplication
@@ -128,6 +130,7 @@ class Runner(QThread):
             self.window.show()
             self.window.quoteWindow.show()
             self.change_text.emit("Слушаю...")
+            self.change_text.emit(speech_manager.recognize())
         if self.ent_check:
             self.ent_check = False
             self.window.enterWindow.hide()
