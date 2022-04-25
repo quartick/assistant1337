@@ -75,9 +75,9 @@ class CustomWindow(QMainWindow):
         win_size = (self.frameSize().width(), self.frameSize().height())
         x = screen_size[0] - win_size[0]
         y = screen_size[1] - win_size[1]
-        # if x != int(self.config["Settings"]["window_pos_x"]) and y != int(self.config["Settings"]["window_pos_y"]):
-        #     x = int(self.config["Settings"]["window_pos_x"])
-        #     y = int(self.config["Settings"]["window_pos_y"])
+        if x != int(self.config["Settings"]["window_pos_x"]) and y != int(self.config["Settings"]["window_pos_y"]):
+            x = int(self.config["Settings"]["window_pos_x"])
+            y = int(self.config["Settings"]["window_pos_y"])
         self.move(x, y)
 
     def initUI(self):
