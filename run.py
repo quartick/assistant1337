@@ -12,7 +12,7 @@ from settings import Settings
 import speech_manager
 import types
 import datetime
-from character_window import DialogWindow
+from dialog_window import DialogWindow
 
 from PyQt5.QtWidgets import QMenu, QSystemTrayIcon, QAction, QWidget, QApplication
 from PyQt5 import QtCore
@@ -200,9 +200,9 @@ class Runner(QThread):
         self.proc_comm.emit(say_comm)
         self.voice_check = 0
 
-    def say_command(self, say_comm):
-        self.proc_comm.emit(say_comm)
-        self.voice_check = 0
+    # def say_command(self, say_comm):
+    #     self.proc_comm.emit(say_comm)
+    #     self.voice_check = 0
 
     # Метод для получения времени для обращения к пользователю
     def change_window(self, window):

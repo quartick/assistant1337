@@ -8,7 +8,7 @@ import configparser
 from PyQt5.QtWidgets import QWidget, QCompleter, QApplication, QFrame, QStackedLayout, QGridLayout, \
     QLineEdit, QVBoxLayout, QHBoxLayout, QLabel
 
-from PyQt5.QtCore import QMetaObject, Qt
+from PyQt5.QtCore import QMetaObject, Qt, pyqtSlot
 
 
 class EnterField(QWidget):
@@ -138,6 +138,65 @@ class EnterField(QWidget):
 
         QMetaObject.connectSlotsByName(self.frame)
 
+class EnterWindow(EnterField):
+    def __init__(self, win_size):
+        super().__init__()
+        self.win_size = win_size
+        self.win_size.size_ent.connect(self.size_change)
+        self.win2 = 0
+        self.edit_line.returnPressed.connect(self.input_comm)
+
+    @pyqtSlot(int)
+    def size_change(self, size):
+        width = 445 * size / 100
+        height = 100 * size / 100
+        self.scale = int(size / 100 * 18)
+        self.back.setStyleSheet(
+            '''
+            background-color: %s;
+            border-width: 2px;
+            border-style: solid;
+            border-radius: 10px;
+            border-color: %s;
+            min-width: 10em;
+            min-height: 5em;
+            font: %s;
+            ''' % (self.bg_color,
+                   self.border_color,
+                   str(self.scale) + 'px'))
+        self.edit_line.setStyleSheet(
+            '''
+            background-color: rgba(0, 0, 0, 00);
+            border-width: 2px;
+            border-style: solid;
+            border-radius: 10px;
+            border-color: %s;
+            font:  %s;
+            color: %s;
+            font-style: italic;
+            min-width: 10em;
+            padding: 6px;
+            ''' % (self.border_color,
+                   self.font_color,
+                   str(self.scale) + 'px'))
+        self.label.setStyleSheet(
+            '''
+            font:  %s;
+            color: %s;
+            font-style: italic;
+            padding: 6px;
+            ''' % (str(self.scale) + 'px',
+                   self.font_color))
+
+    def input_comm(self):
+        comm = f'{self.edit_line.text()} '
+        if len(comm) > 1:
+            self.win2.input_comm(f'{comm}')
+            self.say.setText(comm)
+            self.edit_line.clear()
+        else:
+            self.say.clear()
+            self.win2.textEdit.setText("Вы ничего не ввели.")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
