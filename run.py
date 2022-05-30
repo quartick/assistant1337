@@ -147,7 +147,7 @@ class Runner(QThread):
             self.window.quoteWindow.show()
             self.change_text.emit("Слушаю...")
             self.command = speech_manager.recognize()
-            # DialogWindow.do_command(self.command)
+            self.change_text.connect(self.window.quoteWindow.input_comm)
             self.change_text.emit(self.command)
             self.voice_check = 0
         if self.ent_check:
@@ -192,7 +192,6 @@ class Runner(QThread):
         if self.win_check == True:
             self.win_check = False
             self.window.hide()
-            # self.icon.show()
         self.settings_class.show()
 
 

@@ -4,14 +4,15 @@
 
 p.s. Я сломал возможность изменять хоткеи поэтому надо подфиксить а пока закоментирую чтобы не тыкалось
 """
-
+import easygui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget, QTableWidget, QTableWidgetItem, \
-    QMessageBox, QDesktopWidget, QWidget, QLabel, QPushButton, QTextEdit, QSlider
+    QMessageBox, QDesktopWidget, QWidget, QLabel, QPushButton, QTextEdit, QSlider, QAbstractItemView, QInputDialog
 import sys
 from configparser import ConfigParser
 import pickle
+
 
 
 class Settings(QMainWindow):
@@ -635,11 +636,24 @@ class Settings(QMainWindow):
             '''
         )
 
-        """
-        
-        ТУТ НАДА ТАБЛИЦУ ДЕЛАТЬ!!!!!!!!1!!!!11!1!!
-        
-        """
+        self.count = len(self.path)
+
+        self.table.setColumnCount(2)  # Устанавливаем три колонки
+        self.table.setRowCount(self.count)  # и одну строку в таблице
+        num = 0
+        for i in self.path:
+            self.table.setItem(num, 0, QTableWidgetItem(f"{i}"))
+            self.table.setItem(num, 1, QTableWidgetItem(f"{self.path[i]}"))
+            num += 1
+        # Устанавливаем заголовки таблицы
+        self.table.setHorizontalHeaderLabels(["Название(команда):", "Путь до папки/файла:"])
+
+        # делаем ресайз колонок по содержимому
+        self.table.resizeColumnsToContents()
+
+        # запрещаем редактировать таблицу
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
 
         self.tab_pb_2 = QPushButton("Удалить", self.Widget_4)
         self.tab_pb_2.setGeometry(QRect(500, 400, 80, 32))
@@ -657,6 +671,7 @@ class Settings(QMainWindow):
             padding: 1px;}
             '''
         )
+        self.tab_pb_2.clicked.connect(self.remove_Row)
 
         self.tab_pb_3 = QPushButton("Добавить файл", self.Widget_4)
         self.tab_pb_3.setGeometry(QRect(40, 400, 130, 32))
@@ -674,6 +689,7 @@ class Settings(QMainWindow):
             padding: 1px;}
             '''
         )
+        self.tab_pb_3.clicked.connect(self.add_file)
 
         self.tab_pb_4 = QPushButton("Добавить папку", self.Widget_4)
         self.tab_pb_4.setGeometry(QRect(185, 400, 130, 32))
@@ -691,6 +707,7 @@ class Settings(QMainWindow):
             padding: 1px;}
             '''
         )
+        self.tab_pb_4.clicked.connect(self.add_dir)
 
         self.pushButton_23 = QPushButton(self.Widget_4)
         self.pushButton_23.setGeometry(QRect(5, 210, 21, 51))
@@ -795,6 +812,54 @@ class Settings(QMainWindow):
             pickle.dump(self.path, f)
 
         self.close()
+
+    def add_file(self):
+        choice_dir = easygui.fileopenbox()
+
+        if choice_dir != None:
+            text, ok = QInputDialog.getText(self, 'Ввод команды',
+                                            'Введите команду для открытия файла:')
+
+            if ok and text:
+                self.path[text] = f'{choice_dir}'
+                self.count += 1
+                text = str(text).lower()
+                self.table.setRowCount(self.count)
+                self.table.setItem(self.count - 1, 0, QTableWidgetItem(f"{text}"))
+                self.table.setItem(self.count - 1, 1, QTableWidgetItem(f"{choice_dir}"))
+                QMessageBox.about(self, "Успешно", "Файл успешно добавлен в быстрый доступ.")
+            else:
+                QMessageBox.warning(self, "Ошибка", "Вы ничего не ввели (отмена операции)")
+        else:
+            QMessageBox.warning(self, "Ошибка", "Вы не выбрали файл")
+
+    def add_dir(self):
+        choice_dir = easygui.diropenbox()
+
+        if choice_dir != None:
+            text, ok = QInputDialog.getText(self, 'Ввод команды',
+                                            'Введите команду для открытия папки:')
+
+            if ok and text:
+                self.path[text] = f'{choice_dir}'
+                self.count += 1
+                text = str(text).lower()
+                self.table.setRowCount(self.count)
+                self.table.setItem(self.count - 1, 0, QTableWidgetItem(f"{text}"))
+                self.table.setItem(self.count - 1, 1, QTableWidgetItem(f"{choice_dir}"))
+                QMessageBox.about(self, "Успешно", "Папка успешно добавлена в быстрый доступ.")
+            else:
+                QMessageBox.warning(self, "Ошибка", "Вы ничего не ввели (отмена операции)")
+        else:
+            QMessageBox.warning(self, "Ошибка", "Вы не выбрали папку")
+
+    def remove_Row(self):
+        for index in self.table.selectedIndexes():
+            callEdit = self.table.item(index.row(), 0)
+            self.path.pop(callEdit.text())
+            self.table.removeRow(index.row())
+            self.count -= 1
+            break
 
     def info(self):
         QMessageBox.about(self, 'О программе:',

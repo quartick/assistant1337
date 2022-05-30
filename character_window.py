@@ -95,7 +95,6 @@ class CustomWindow(QMainWindow):
         self.quoteWindow.start_manual.connect(self.manual)
 
         self.flow.start_image.connect(self.change_pic)
-        self.change_textt.connect(self.quoteWindow.input_comm)
         self.flow.change_text.connect(self.quoteWindow.textEdit.setText)
 
         self.tab1 = QWidget()
