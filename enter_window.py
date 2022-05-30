@@ -138,6 +138,7 @@ class EnterField(QWidget):
 
         QMetaObject.connectSlotsByName(self.frame)
 
+
 class EnterWindow(EnterField):
     def __init__(self, win_size):
         super().__init__()
@@ -197,6 +198,7 @@ class EnterWindow(EnterField):
         else:
             self.say.clear()
             self.win2.textEdit.setText("Вы ничего не ввели.")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

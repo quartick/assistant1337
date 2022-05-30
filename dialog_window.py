@@ -147,7 +147,7 @@ class DialogWindow(Ui_Form):
     # Обработка команд
     @pyqtSlot(str)
     def input_comm(self, command):
-        #self.textEdit.append(f'Вы сказали - {command}')
+        self.textEdit.append(f'Вы сказали - {command}')
         command = wordskey.words_recog(command)
         self.do_command(command)
 

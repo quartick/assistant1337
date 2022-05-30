@@ -1,6 +1,7 @@
 import json
 import operator
 import pickle
+import sys
 import threading
 import webbrowser
 import datetime
@@ -76,9 +77,9 @@ class CustomWindow(QMainWindow):
         win_size = (self.frameSize().width(), self.frameSize().height())
         x = screen_size[0] - win_size[0]
         y = screen_size[1] - win_size[1]
-        # if x != int(self.config["Settings"]["window_pos_x"]) and y != int(self.config["Settings"]["window_pos_y"]):
-        #     x = int(self.config["Settings"]["window_pos_x"])
-        #     y = int(self.config["Settings"]["window_pos_y"])
+        if x != int(self.config["Settings"]["window_pos_x"]) and y != int(self.config["Settings"]["window_pos_y"]):
+            x = int(self.config["Settings"]["window_pos_x"])
+            y = int(self.config["Settings"]["window_pos_y"])
         self.move(x, y)
 
     def initUI(self):
@@ -158,7 +159,7 @@ class CustomWindow(QMainWindow):
         self.l.m.setFileName(path)
         self.l.m.start()
 
-    # Изменение размеров
+    # Окно изменения размеров
     def show_size_setup(self):
         if self.choi_size_settin == 0:
             self.choi_size_settin = 1
@@ -281,9 +282,9 @@ class Setup_size_window(QDialog):
         self.size = []
         self.value = int(config["Settings"]["window_scale"])
         self.config = config
-        self.initUI()
+        self.initUI(config)
 
-    def initUI(self):
+    def initUI(self, config):
         self.setGeometry(50, 50, 200, 150)
 
         screen_geometry = QApplication.desktop().availableGeometry()
@@ -298,6 +299,7 @@ class Setup_size_window(QDialog):
         self.pixmap = QPixmap("Image/Other/Tray1.png")
         self.mini_pix = self.pixmap.scaled(200, 150, Qt.IgnoreAspectRatio, Qt.FastTransformation)
         self.label_1.setPixmap(self.mini_pix)
+        self.value = int(config["Settings"]["window_scale"])
         self.line1 = QLabel(self)
         self.line1.setText(str(self.value) + "%")
         self.line1.setStyleSheet(
@@ -308,7 +310,7 @@ class Setup_size_window(QDialog):
             '''
         )
         Glayout.addWidget(self.line1, 1, 2)
-        self.slider = QSlider(Qt.Horizontal)
+        self.slider = QSlider(Qt.Horizontal, self)
         self.slider.setFocusPolicy(Qt.StrongFocus)
         self.slider.setTickPosition(QSlider.TicksBothSides)
         self.slider.setTickInterval(25)
@@ -320,6 +322,7 @@ class Setup_size_window(QDialog):
 
         self.bt1 = QPushButton("OK", self)
         self.bt1.clicked.connect(self.on_click)
+        self.bt1.clicked.connect(self.save)
         self.bt1.setStyleSheet(
             ''' 
             QPushButton:hover {background-color: white;
@@ -353,6 +356,10 @@ class Setup_size_window(QDialog):
         Glayout.addWidget(self.cbt, 3, 1)
         self.setLayout(Glayout)
 
+        with open("Pickle/path_base_win.pickle", "rb") as f:
+            self.path = pickle.load(f)
+
+
     def cancel(self):
         self.win_CW.choi_size_settin = 0
         self.close()
@@ -362,20 +369,28 @@ class Setup_size_window(QDialog):
         self.line1.setText(str(self.value) + "%")
 
     def on_click(self):
-        width = int(self.config["Settings"]["Window_size_w"])
-        height = int(self.config["Settings"]["Window_size_h"])
-        width = width * self.value / 100
-        height = height * self.value / 100
-        self.size_CW.emit(int(self.value))
-        self.size_pic.emit(int(self.value))
-        self.size_dialog.emit(int(self.value))
-        self.size_ent.emit(int(self.value))
-        self.size_weather.emit(int(self.value))
+        # width = int(self.config["Settings"]["Window_size_w"])
+        # height = int(self.config["Settings"]["Window_size_h"])
+        # width = width * self.value / 100
+        # height = height * self.value / 100
+        # self.size_CW.emit(int(self.value))
+        # self.size_pic.emit(int(self.value))
+        # self.size_dialog.emit(int(self.value))
+        # self.size_ent.emit(int(self.value))
+        # self.size_weather.emit(int(self.value))
         self.config["Settings"]["window_scale"] = str(self.value)
 
         with open("Data/Config.ini", 'w') as configfile:
             self.config.write(configfile)
         self.win_CW.choi_size_settin = 0
+        self.close()
+
+    def save(self):
+        self.config["Exit"]["Answer_w2"] = "No"
+        with open("Pickle/path_base_win.pickle", "wb") as f:
+            pickle.dump(self.path, f)
+        with open("Data/Config.ini", 'w') as configfile:
+            self.config.write(configfile)
         self.close()
 
 

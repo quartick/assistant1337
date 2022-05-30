@@ -7,6 +7,7 @@ import threading
 
 from pynput import keyboard
 import dialog_window
+from character_window import CustomWindow
 
 from settings import Settings
 import speech_manager
@@ -33,6 +34,9 @@ class Runner(QThread):
         super().__init__()
 
         self.settings_class = Settings()
+        # thread1 = Runner(config=config)
+        # thread1.start()
+        # self.helper = CustomWindow(config, flow=thread1)
         self.config = 0
         self.command = ""
         self.win_check = True                                                       # Проверка на отрытие основного окна
@@ -110,7 +114,7 @@ class Runner(QThread):
 
 
     def close(self):
-        print('1')
+        exit()
 
     # Метод для отображения изображения
     def image_display(self):
@@ -188,6 +192,7 @@ class Runner(QThread):
         if self.win_check == True:
             self.win_check = False
             self.window.hide()
+            # self.icon.show()
         self.settings_class.show()
 
 
